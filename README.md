@@ -1,4 +1,4 @@
-# Alpha-Hunter
+# Chosa Agent
 
 **Autonomous Financial Agent Platform** — Continuously running agent that ingests real-time market streams, detects anomalies, performs autonomous evidence gathering, and produces portfolio-personalized recommendations with explainability and human control boundaries.
 
