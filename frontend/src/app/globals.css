@@ -1,0 +1,374 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #060a14;
+  --bg-secondary: #0d1321;
+  --bg-card: #111a2e;
+  --bg-card-hover: #182240;
+  --bg-elevated: #1c2842;
+  --bg-surface: #0f1729;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #5a6a82;
+  --text-dim: #3d4f6a;
+
+  --border-primary: rgba(99, 117, 168, 0.12);
+  --border-accent: rgba(99, 117, 168, 0.22);
+  --border-glow: rgba(59, 130, 246, 0.3);
+
+  --accent-blue: #3b82f6;
+  --accent-cyan: #06b6d4;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-red: #ef4444;
+  --accent-violet: #8b5cf6;
+  --accent-rose: #f43f5e;
+
+  --shadow-card: 0 2px 16px rgba(0,0,0,0.35), 0 0 0 1px rgba(99,117,168,0.06);
+  --shadow-glow-blue: 0 0 24px rgba(59,130,246,0.12), 0 0 60px rgba(59,130,246,0.06);
+  --shadow-glow-emerald: 0 0 24px rgba(16,185,129,0.12);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+code, pre, .mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(99,117,168,0.15); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99,117,168,0.3); }
+
+.custom-scrollbar::-webkit-scrollbar { width: 4px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99,117,168,0.1); border-radius: 4px; }
+
+/* ── Glass ── */
+.glass {
+  background: rgba(6,10,20,0.85);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+}
+
+/* ── Card ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-normal);
+}
+.card:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-card), 0 0 20px rgba(59,130,246,0.04);
+}
+
+/* ── Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+.badge-running { background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.25); }
+.badge-paused { background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.25); }
+.badge-terminated { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+.badge-degraded { background: rgba(139,92,246,0.1); color: #8b5cf6; border: 1px solid rgba(139,92,246,0.25); }
+.badge-unknown { background: rgba(90,106,130,0.1); color: #5a6a82; border: 1px solid rgba(90,106,130,0.25); }
+.badge-buy { background: rgba(16,185,129,0.12); color: #10b981; border: 1px solid rgba(16,185,129,0.2); }
+.badge-sell { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+.badge-watch { background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); }
+.badge-hold { background: rgba(59,130,246,0.1); color: #3b82f6; border: 1px solid rgba(59,130,246,0.2); }
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideLeft {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes progress-fill {
+  from { width: 0; }
+}
+@keyframes countdown-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+@keyframes glow-ring {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(59,130,246,0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(59,130,246,0); }
+}
+@keyframes float-in {
+  0% { opacity: 0; transform: scale(0.95) translateY(8px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes modal-backdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes modal-content {
+  from { opacity: 0; transform: scale(0.92) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.animate-fadeIn { animation: fadeIn 0.4s ease forwards; }
+.animate-slideUp { animation: slideUp 0.5s ease forwards; }
+.animate-slideRight { animation: slideRight 0.4s ease forwards; }
+.animate-pulse-dot { animation: pulse-dot 1.5s ease-in-out infinite; }
+.animate-glow-ring { animation: glow-ring 2s ease-in-out infinite; }
+.animate-float-in { animation: float-in 0.5s cubic-bezier(0.4,0,0.2,1) forwards; }
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.03) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* ── Drawer ── */
+.drawer-overlay {
+  animation: modal-backdrop 0.25s ease forwards;
+}
+.drawer-panel {
+  animation: slideLeft 0.3s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+/* ── Modal ── */
+.modal-overlay {
+  animation: modal-backdrop 0.2s ease forwards;
+}
+.modal-content {
+  animation: modal-content 0.35s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+
+/* ── Confidence bar ── */
+.confidence-bar {
+  animation: progress-fill 1s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+
+/* ── Countdown ── */
+.countdown-active {
+  animation: countdown-pulse 2s ease-in-out infinite;
+}
+
+/* ── Status strip ── */
+.status-strip {
+  background: linear-gradient(90deg, rgba(6,10,20,0.95) 0%, rgba(17,26,46,0.95) 100%);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+/* ── Grouped card ── */
+.grouped-card {
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(17,26,46,0.95) 100%);
+}
+
+/* ── Kill confirmation ── */
+.kill-input::placeholder {
+  color: rgba(239,68,68,0.3);
+}
+
+/* ══════════════ Agent Topology Pipeline ══════════════ */
+.topology-pipeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  overflow-x: auto;
+  padding: 8px 0;
+}
+.topology-node-wrapper {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.topology-node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(17,26,46,0.6);
+  border: 1px solid rgba(99,117,168,0.12);
+  min-width: 100px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.topology-node-active {
+  border-color: rgba(59,130,246,0.5) !important;
+  box-shadow: 0 0 20px rgba(59,130,246,0.15);
+  background: rgba(17,26,46,0.9);
+}
+.topology-status-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px currentColor;
+}
+.topology-node-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.topology-node-type {
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.topology-node-model {
+  font-size: 7px;
+  font-weight: 500;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.topology-edge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 4px;
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+.topology-edge-active {
+  opacity: 1;
+}
+.topology-edge-line {
+  width: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+}
+.topology-edge-arrow {
+  font-size: 12px;
+  color: var(--accent-blue);
+  line-height: 1;
+  margin-top: -4px;
+}
+.topology-edge-label {
+  font-size: 6px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+/* ══════════════ Impact Panel ══════════════ */
+.impact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.impact-metric-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+  background: rgba(17,26,46,0.5);
+  border: 1px solid rgba(99,117,168,0.08);
+  transition: all 0.2s ease;
+}
+.impact-metric-card:hover {
+  border-color: rgba(99,117,168,0.18);
+  background: rgba(17,26,46,0.7);
+}
+.impact-metric-icon {
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.impact-metric-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.impact-metric-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.impact-metric-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.impact-metric-sub {
+  font-size: 9px;
+  color: var(--text-dim);
+}
+
+/* ══════════════ Glass card ══════════════ */
+.glass-card {
+  background: linear-gradient(135deg, rgba(17,26,46,0.85) 0%, rgba(13,19,33,0.9) 100%);
+  border: 1px solid var(--border-primary);
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
+}
+
+/* ══════════════ Responsive ══════════════ */
+@media (max-width: 1100px) {
+  .topology-impact-grid { grid-template-columns: 1fr !important; }
+  .impact-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 700px) {
+  .impact-grid { grid-template-columns: 1fr; }
+  .topology-pipeline { gap: 4px; }
+  .topology-node { min-width: 80px; padding: 8px 10px; }
+}

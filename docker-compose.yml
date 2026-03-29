@@ -1,0 +1,114 @@
+version: "3.9"
+
+services:
+  # ──────────────────────────── PostgreSQL + pgvector ────────────────────────────
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: ah-postgres
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-alphahunter}
+      POSTGRES_USER: ${POSTGRES_USER:-ahuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ahpass}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ahuser} -d ${POSTGRES_DB:-alphahunter}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ──────────────────────────── Redis 7 ────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: ah-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: >
+      redis-server
+        --appendonly yes
+        --maxmemory 512mb
+        --maxmemory-policy noeviction
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ──────────────────────────── Backend (FastAPI) ────────────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ah-backend
+    restart: unless-stopped
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-ahuser}:${POSTGRES_PASSWORD:-ahpass}@postgres:5432/${POSTGRES_DB:-alphahunter}
+      - DATABASE_URL_SYNC=postgresql://${POSTGRES_USER:-ahuser}:${POSTGRES_PASSWORD:-ahpass}@postgres:5432/${POSTGRES_DB:-alphahunter}
+      - REDIS_URL=redis://redis:6379/0
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - MARKET_PROVIDER=${MARKET_PROVIDER:-mock}
+      - UPSTOX_API_KEY=${UPSTOX_API_KEY:-}
+      - UPSTOX_API_SECRET=${UPSTOX_API_SECRET:-}
+      - UPSTOX_REDIRECT_URI=${UPSTOX_REDIRECT_URI:-}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: >
+      uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --log-level info
+
+  # ──────────────────────────── Frontend (Next.js 15) ────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ah-frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:${BACKEND_PORT:-8000}
+      - NEXT_PUBLIC_WS_URL=ws://localhost:${BACKEND_PORT:-8000}
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+
+  # ──────────────────────────── Monitoring (dev profile) ────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: ah-prometheus
+    profiles: ["monitoring"]
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./docs/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: ah-grafana
+    profiles: ["monitoring"]
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+
+volumes:
+  pgdata:
+  redisdata:
